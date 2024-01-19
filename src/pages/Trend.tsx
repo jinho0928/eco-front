@@ -5,7 +5,7 @@ import axios from "axios";
 import { DateTime } from "luxon";
 import { Observer, useLocalObservable } from "mobx-react";
 import "react-data-grid/lib/styles.css";
-import { autorun, transaction } from "mobx";
+import { autorun, transaction, values } from "mobx";
 import EditIcon from "@mui/icons-material/Edit";
 import { PackingListDialog } from "../components/PackingListDIalog";
 import { Filter } from "../components/Filter";
@@ -44,36 +44,51 @@ function Trend() {
             axios
                 .get(`${serverUrl}/trend?start=${start}&end=${end}`)
                 .then(({ data }) => {
-                    this.items = data.result;
+                    const items = data.result.reduce((acc, item) => {
+                        const { skuid, date, inventory, name, num, value } = item;
+                        if (acc[skuid]) {
+                            acc[skuid][date] = value;
+                        } else {
+                            acc[skuid] = {
+                                skuid,
+                                name,
+                                num,
+                                inventory,
+                            }
+                        }
+                        return acc;
+                    }, {});
+
+                    this.items = Object.values(items)
                 });
         },
 
-        updateInbound(skuid, date, value) {
-            axios
-                .put(`${serverUrl}/inbounds/${skuid}`, { date, value })
-                .then(({ data }) => {
-                    this.fetchInbounds(
-                        this.start.toFormat("yyyy-MM-dd"),
-                        this.end.toFormat("yyyy-MM-dd")
-                    );
-                });
-        },
+        // updateInbound(skuid, date, value) {
+        //     axios
+        //         .put(`${serverUrl}/inbounds/${skuid}`, { date, value })
+        //         .then(({ data }) => {
+        //             this.fetchInbounds(
+        //                 this.start.toFormat("yyyy-MM-dd"),
+        //                 this.end.toFormat("yyyy-MM-dd")
+        //             );
+        //         });
+        // },
 
-        addInbound(skuid, date, value) {
-            const list = [{ skuid, value }];
+        // addInbound(skuid, date, value) {
+        //     const list = [{ skuid, value }];
 
-            axios
-                .post(`${serverUrl}/inbounds`, {
-                    date,
-                    list,
-                })
-                .then(({ data }) => {
-                    this.fetchInbounds(
-                        this.start.toFormat("yyyy-MM-dd"),
-                        this.end.toFormat("yyyy-MM-dd")
-                    );
-                });
-        },
+        //     axios
+        //         .post(`${serverUrl}/inbounds`, {
+        //             date,
+        //             list,
+        //         })
+        //         .then(({ data }) => {
+        //             this.fetchInbounds(
+        //                 this.start.toFormat("yyyy-MM-dd"),
+        //                 this.end.toFormat("yyyy-MM-dd")
+        //             );
+        //         });
+        // },
 
         get columns() {
             const dateArr = [];
@@ -90,19 +105,16 @@ function Trend() {
                     width: 80
                 }))
                 .filter((column) => {
+                    console.log(column)
                     return this.items.filter((item) => !!item[column.key]).length > 0;
                 });
+
 
             return [
                 { key: "num", name: "No.", width: 80 },
                 { key: "skuid", name: "SKU ID", width: 150 },
                 { key: "name", name: "상품명", width: 400 },
                 ..._columns,
-                {
-                    key: "sum",
-                    name: "합계",
-                    width: 80,
-                },
             ];
         },
     }));
