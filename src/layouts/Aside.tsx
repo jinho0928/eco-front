@@ -5,7 +5,8 @@ const MENU_ITEMS = [
   { path: "/inbound", name: "입고" },
   { path: "/outbound", name: "출고" },
   { path: "/inventory", name: "재고" },
-  { path: "/outbound-list", name: "출고리스트" },
+  { path: "/outbounds", name: "출고리스트" },
+  { path: "/products", name: "상품리스트" },
 ];
 function Aside() {
   const { pathname } = useLocation();

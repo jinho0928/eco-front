@@ -41,10 +41,20 @@ const Router = () => {
           재고
         </Route>
         <Route
-          path="/outbound-list"
+          path="/outbounds"
           element={
             <Layout title={"출고리스트"}>
               <Pages.OutboundList />
+            </Layout>
+          }
+        >
+          예상출고리스트
+        </Route>
+        <Route
+          path="/products"
+          element={
+            <Layout title={"상품리스트"}>
+              <Pages.ProductList />
             </Layout>
           }
         >
