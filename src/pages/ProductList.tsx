@@ -2,7 +2,7 @@ import DataGrid from "react-data-grid";
 import { useEffect } from "react";
 import { useLocalObservable, Observer } from "mobx-react";
 import axios from "axios";
-import { Button, styled } from "@mui/material";
+import { Button, ListItem, styled } from "@mui/material";
 import { ProductCreateDialog } from "../components/ProductCreateDialog";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
@@ -22,6 +22,52 @@ function ProductList() {
     isOpen: false,
 
     items: [],
+    sortColumns: null,
+
+    get sortedItems() {
+      const sortColumn = this.sortColumns?.[0] ?? null;
+      if (sortColumn) {
+        return this.items.slice().sort((a, b) => {
+          const valueA = a[sortColumn.columnKey];
+          const valueB = b[sortColumn.columnKey];
+          function extractNumber(str) {
+            // 숫자가 아닌 문자를 제거하여 숫자만 추출
+            return parseInt(str.replace(/\D/g, ""), 10) || 0;
+          }
+
+          function isNumeric(str) {
+            // 숫자인지 여부 확인
+            return !isNaN(parseFloat(str)) && isFinite(str);
+          }
+
+          // "L"을 포함한 숫자로 비교
+          const numA = isNumeric(valueA)
+            ? extractNumber(valueA)
+            : parseFloat(valueA);
+          const numB = isNumeric(valueB)
+            ? extractNumber(valueB)
+            : parseFloat(valueB);
+
+          // 정렬 방향에 따라 비교
+          if (sortColumn.direction === "ASC") {
+            return isNumeric(valueA) && isNumeric(valueB)
+              ? numA - numB
+              : valueA.localeCompare(valueB);
+          } else if (sortColumn.direction === "DESC") {
+            return isNumeric(valueA) && isNumeric(valueB)
+              ? numB - numA
+              : valueB.localeCompare(valueA);
+          } else {
+            // 정렬 방향이 지정되지 않은 경우, 기본적으로 오름차순 정렬
+            return isNumeric(valueA) && isNumeric(valueB)
+              ? numA - numB
+              : valueA.localeCompare(valueB);
+          }
+        });
+      } else {
+        return this.items;
+      }
+    },
 
     setItems(items) {
       this.items = items;
@@ -65,9 +111,11 @@ function ProductList() {
       <Observer>
         {() => (
           <DataGrid
-            rows={store.items}
+            rows={store.sortedItems}
             columns={columns}
-            defaultColumnOptions={{ resizable: true }}
+            defaultColumnOptions={{ resizable: true, sortable: true }}
+            sortColumns={store.sortColumns}
+            onSortColumnsChange={(columns) => (store.sortColumns = columns)}
           />
         )}
       </Observer>
