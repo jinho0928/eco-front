@@ -104,16 +104,16 @@ function Trend() {
                     name: date.toFormat("MM/dd"),
                     width: 80
                 }))
-                .filter((column) => {
-                    console.log(column)
-                    return this.items.filter((item) => !!item[column.key]).length > 0;
-                });
+                .filter((column) =>
+                    this.items.filter((item) => !!item[column.key]).length > 0
+                );
 
 
             return [
                 { key: "num", name: "No.", width: 80 },
                 { key: "skuid", name: "SKU ID", width: 150 },
                 { key: "name", name: "상품명", width: 400 },
+                { key: "inventory", name: "현재고", width: 100 },
                 ..._columns,
             ];
         },
