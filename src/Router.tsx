@@ -17,9 +17,7 @@ const Router = () => {
               <Pages.Inbound />
             </Layout>
           }
-        >
-          입고
-        </Route>
+        />
         <Route
           path="/outbound"
           element={
@@ -27,9 +25,7 @@ const Router = () => {
               <Pages.Outbound />
             </Layout>
           }
-        >
-          출고
-        </Route>
+        />
         <Route
           path="/inventory"
           element={
@@ -37,9 +33,15 @@ const Router = () => {
               <Pages.Inventory />
             </Layout>
           }
-        >
-          재고
-        </Route>
+        />
+        <Route
+          path="/trend"
+          element={
+            <Layout title={"판매추이"}>
+              <Pages.Trend />
+            </Layout>
+          }
+        />
         <Route
           path="/outbounds"
           element={
@@ -47,9 +49,7 @@ const Router = () => {
               <Pages.OutboundList />
             </Layout>
           }
-        >
-          예상출고리스트
-        </Route>
+        />
         <Route
           path="/products"
           element={
@@ -57,10 +57,7 @@ const Router = () => {
               <Pages.ProductList />
             </Layout>
           }
-        >
-          예상출고리스트
-        </Route>
-
+        />
         <Route
           path="*"
           element={

@@ -20,6 +20,7 @@ import { parseOrderList, readFileAsArrayBuffer } from "../utils";
 import { OrderListDialog } from "../components/OrderListDialog";
 import { Filter } from "../components/Filter";
 import FileUploadButton from "../components/FileUploadButton";
+import { customSort } from "../utils/sort";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -34,6 +35,16 @@ function Outbound() {
 
     // data
     items: [],
+    sortColumns: null,
+
+    get sortedItems() {
+      const sortColumn = this.sortColumns?.[0] ?? null;
+      if (sortColumn) {
+        return this.items.slice().sort((a, b) => customSort(a, b, sortColumn));
+      } else {
+        return this.items;
+      }
+    },
 
     isOpen: false,
     files: [],
@@ -195,9 +206,11 @@ function Outbound() {
       <Observer>
         {() => (
           <DataGrid
-            rows={store.items}
+            rows={store.sortedItems}
+            defaultColumnOptions={{ resizable: true, sortable: true }}
+            sortColumns={store.sortColumns}
+            onSortColumnsChange={(columns) => (store.sortColumns = columns)}
             columns={store.columns}
-            defaultColumnOptions={{ resizable: true }}
           />
         )}
       </Observer>

@@ -4,6 +4,7 @@ import DataGrid from "react-data-grid";
 import axios from "axios";
 import { Observer, useLocalObservable } from "mobx-react";
 import "react-data-grid/lib/styles.css";
+import { customSort } from "../utils/sort";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -36,6 +37,17 @@ function Inventory() {
   const store = useLocalObservable(() => ({
     // data
     items: [],
+    sortColumns: null,
+
+    get sortedItems() {
+      const sortColumn = this.sortColumns?.[0] ?? null;
+      if (sortColumn) {
+        return this.items.slice().sort((a, b) => customSort(a, b, sortColumn));
+      } else {
+        return this.items;
+      }
+    },
+
 
     fetchInventories() {
       axios.get(`${serverUrl}/inventories`).then(({ data }) => {
@@ -64,9 +76,11 @@ function Inventory() {
       <Observer>
         {() => (
           <DataGrid
-            rows={store.items}
+            rows={store.sortedItems}
+            defaultColumnOptions={{ resizable: true, sortable: true }}
+            sortColumns={store.sortColumns}
+            onSortColumnsChange={(columns) => (store.sortColumns = columns)}
             columns={columns}
-            defaultColumnOptions={{ resizable: true }}
           />
         )}
       </Observer>

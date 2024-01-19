@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { PackingListDialog } from "../components/PackingListDIalog";
 import { Filter } from "../components/Filter";
 import FileUploadButton from "../components/FileUploadButton";
+import { customSort } from "../utils/sort";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -24,6 +25,16 @@ function Inbound() {
 
     // data
     items: [],
+    sortColumns: null,
+
+    get sortedItems() {
+      const sortColumn = this.sortColumns?.[0] ?? null;
+      if (sortColumn) {
+        return this.items.slice().sort((a, b) => customSort(a, b, sortColumn));
+      } else {
+        return this.items;
+      }
+    },
 
     isOpen: false,
     files: [],
@@ -192,9 +203,11 @@ function Inbound() {
       <Observer>
         {() => (
           <DataGrid
-            rows={store.items}
+            rows={store.sortedItems}
             columns={store.columns}
-            defaultColumnOptions={{ resizable: true }}
+            defaultColumnOptions={{ resizable: true, sortable: true }}
+            sortColumns={store.sortColumns}
+            onSortColumnsChange={(columns) => (store.sortColumns = columns)}
           />
         )}
       </Observer>

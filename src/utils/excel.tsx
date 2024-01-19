@@ -107,6 +107,37 @@ export async function parsePackingList({ arrayBuffer }): Promise<any> {
   return { items, date };
 }
 
+export async function parseTrend({ arrayBuffer }): Promise<any> {
+  const book = XLSX.read(arrayBuffer, {
+    type: 'buffer',
+    cellDates: true,
+  });
+
+  const sheetName = book.SheetNames[0];
+  const sheet = book.Sheets[sheetName];
+
+  const _rows: any[] = XLSX.utils
+    .sheet_to_json(sheet, {
+      header: 1,
+    })
+
+  const _keys = {
+    0: 'skuid',
+    1: 'current',
+  }
+  const keys = _rows[0].map((key, index) => _keys[index] ?? DateTime.fromJSDate(key).toFormat('yyyy-MM-dd'))
+
+  const rows = _rows.slice(1).map((row) => {
+    return row.reduce((acc, cur, index) => {
+      acc[keys[index]] = cur;
+      return acc
+    }, {})
+  })
+
+
+  return { rows, keys };
+}
+
 export async function readFileAsArrayBuffer(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
