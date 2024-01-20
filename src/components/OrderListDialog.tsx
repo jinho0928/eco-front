@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-export function OrderListDialog({ open, onClose, files }) {
+export function OrderListDialog({ open, onClose, onSuccess, files }) {
   const store = useLocalObservable(() => ({
     orderList: [],
     isOpen: false,
@@ -51,17 +51,17 @@ export function OrderListDialog({ open, onClose, files }) {
         store.orderList = itemList.flat();
         store.isLoaded = true;
       });
-      console.log('loaded')
     })();
   }, []);
 
   const handleAdd = async () => {
     await store.addOutbound();
-    onClose(true);
+    onSuccess();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
+      <strong style={{ fontSize: 20 }}>발주서</strong>
       <Observer>
         {() =>
           store.isLoaded && (

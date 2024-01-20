@@ -20,7 +20,9 @@ import { parseOrderList, readFileAsArrayBuffer } from "../utils";
 import { OrderListDialog } from "../components/OrderListDialog";
 import { Filter } from "../components/Filter";
 import FileUploadButton from "../components/FileUploadButton";
-import { customSort } from "../utils/sort";
+import { customSort, isNumeric } from "../utils/sort";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { DeleteOrderNoDialog } from "../components/DeleteOrderNoDialog";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -49,9 +51,14 @@ function Outbound() {
     isOpen: false,
     files: [],
 
-    fetchOutbound(start, end) {
+    isDeleteOpen: false,
+    orderNo: '',
+
+    fetchOutbound(start, end, order_no?) {
+      let url = `${serverUrl}/outbounds?start=${start}&end=${end}`
+      if (order_no) url += `&order_no=${order_no}`
       axios
-        .get(`${serverUrl}/outbounds?start=${start}&end=${end}`)
+        .get(url)
         .then(({ data }) => {
           this.items = data.result;
         });
@@ -81,6 +88,19 @@ function Outbound() {
             this.end.toFormat("yyyy-MM-dd")
           );
         });
+    },
+
+    async deleteOutbound(order_no) {
+      try {
+        const result = await axios
+          .delete(`${serverUrl}/outbounds/${order_no}`)
+        console.log(result);
+        await this.fetchOutbound(this.start.toFormat("yyyy-MM-dd"),
+          this.end.toFormat("yyyy-MM-dd"))
+      } catch (err) {
+        console.error(err)
+      }
+
     },
 
     get columns() {
@@ -166,17 +186,42 @@ function Outbound() {
     });
   };
 
-  const handleClose = (isAdded) => {
+  const handleClose = (type) => {
     transaction(() => {
-      store.files = [];
-      store.isOpen = false;
+      if (type === 'create') {
+        store.files = [];
+        store.isOpen = false;
+      } else {
+        store.orderNo = '';
+        store.isDeleteOpen = false;
+      }
     });
+  };
 
-    if (isAdded) {
+  const handleSuccess = () => {
+    transaction(() => {
       store.fetchOutbound(store.start.toFormat("yyyy-MM-dd"),
         store.end.toFormat("yyyy-MM-dd"))
+      store.isOpen = false;
+      store.isDeleteOpen = false;
+    })
+
+  }
+
+  const handleDelete = () => {
+    const input = window.prompt(
+      `발주번호`
+    );
+
+    const orderNo = input + '';
+
+    if (isNumeric(orderNo)) {
+      transaction(() => {
+        store.isDeleteOpen = true;
+        store.orderNo = orderNo;
+      })
     }
-  };
+  }
 
   return (
     <Wrapper>
@@ -185,8 +230,22 @@ function Outbound() {
           store.isOpen && (
             <OrderListDialog
               open={store.isOpen}
-              onClose={handleClose}
+              onClose={() => handleClose('create')}
+              onSuccess={handleSuccess}
               files={store.files}
+            />
+          )
+        }
+      </Observer>
+
+      <Observer>
+        {() =>
+          store.isDeleteOpen && (
+            <DeleteOrderNoDialog
+              open={store.isDeleteOpen}
+              onClose={() => handleClose('delete')}
+              onSuccess={handleSuccess}
+              order_no={store.orderNo}
             />
           )
         }
@@ -200,6 +259,14 @@ function Outbound() {
             onStartChange={(value) => (store.start = value)}
             onEndChange={(value) => (store.end = value)}
           >
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<DeleteForeverIcon />}
+              style={{ width: "180px", height: "40px", marginLeft: 'auto' }}
+              onClick={handleDelete}
+            >발주번호로 삭제</Button>
+
             <FileUploadButton
               title="발주서"
               onChange={handleFileChange}

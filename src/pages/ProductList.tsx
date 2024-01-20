@@ -6,6 +6,7 @@ import { Button, styled } from "@mui/material";
 import { ProductCreateDialog } from "../components/ProductCreateDialog";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { customSort } from "../utils/sort";
+import { transaction } from "mobx";
 
 const columns = [
   { key: "num", name: "No.", width: 60, minWidth: 60 },
@@ -66,9 +67,15 @@ function ProductList() {
         {() => (
           <ProductCreateDialog
             open={store.isOpen}
-            onClose={(isCreated: boolean | undefined) => {
-              if (isCreated) store.fetchProducts();
+            onClose={() => {
               store.isOpen = false;
+            }}
+            onSuccess={() => {
+              transaction(() => {
+                store.isOpen = false;
+                store.fetchProducts();
+              })
+
             }}
           />
         )}

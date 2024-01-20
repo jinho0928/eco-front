@@ -156,7 +156,7 @@ function Inbound() {
     });
   };
 
-  const handleClose = () => {
+  const handleClose = (isComplete) => {
     transaction(() => {
       store.files = [];
       store.isOpen = false;
@@ -172,11 +172,15 @@ function Inbound() {
               open={store.isOpen}
               onClose={handleClose}
               files={store.files}
-              onAdd={() =>
-                store.fetchInbounds(
-                  store.start.toFormat("yyyy-MM-dd"),
-                  store.end.toFormat("yyyy-MM-dd")
-                )
+              onSuccess={() => {
+                transaction(() => {
+                  store.isOpen = false;
+                  store.fetchInbounds(
+                    store.start.toFormat("yyyy-MM-dd"),
+                    store.end.toFormat("yyyy-MM-dd")
+                  )
+                })
+              }
               }
             />
           )

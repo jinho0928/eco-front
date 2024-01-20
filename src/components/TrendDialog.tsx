@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-export function TrendDialog({ open, onClose, files, onAdd }) {
+export function TrendDialog({ open, onClose, onSuccess, files }) {
     const store = useLocalObservable(() => ({
         date: "",
         items: [],
@@ -37,7 +37,6 @@ export function TrendDialog({ open, onClose, files, onAdd }) {
                 await axios.post(`${serverUrl}/trend`, {
                     list,
                 });
-                onAdd();
             } catch (err) {
                 console.error(err);
             }
@@ -73,11 +72,12 @@ export function TrendDialog({ open, onClose, files, onAdd }) {
 
     const handleAdd = async () => {
         await store.addTrend();
-        onClose();
+        onSuccess();
     };
 
     return (
         <Dialog open={open} onClose={onClose}>
+            <strong style={{ fontSize: 20 }}>{`판매추이`}</strong>
             <Observer>
                 {() =>
                     store.isLoaded && (

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-export function ProductCreateDialog({ open, onClose }) {
+export function ProductCreateDialog({ open, onClose, onSuccess }) {
   const store = useLocalObservable(() => ({
     skuid: "",
     num: "",
@@ -47,7 +47,7 @@ export function ProductCreateDialog({ open, onClose }) {
   }, [open]);
   const handleCreate = async () => {
     await store.createProduct();
-    onClose(true);
+    onSuccess()
   };
 
   return (

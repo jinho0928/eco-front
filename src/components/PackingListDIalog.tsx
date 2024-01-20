@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-export function PackingListDialog({ open, onClose, files, onAdd }) {
+export function PackingListDialog({ open, onClose, onSuccess, files }) {
   const store = useLocalObservable(() => ({
     date: "",
     packingItems: [],
@@ -27,7 +27,7 @@ export function PackingListDialog({ open, onClose, files, onAdd }) {
           date,
           list,
         });
-        onAdd();
+
       } catch (err) {
         console.error(err);
       }
@@ -49,11 +49,12 @@ export function PackingListDialog({ open, onClose, files, onAdd }) {
 
   const handleAdd = async () => {
     await store.addInbound();
-    onClose();
+    onSuccess();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
+      <strong style={{ fontSize: 20 }}>패킹리스트</strong>
       <Observer>
         {() =>
           store.isLoaded && (

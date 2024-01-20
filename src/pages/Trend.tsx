@@ -159,11 +159,13 @@ function Trend() {
                             open={store.isOpen}
                             onClose={handleClose}
                             files={store.files}
-                            onAdd={() =>
+                            onSuccess={() => {
                                 store.fetchTrends(
                                     store.start.toFormat("yyyy-MM-dd"),
                                     store.end.toFormat("yyyy-MM-dd")
                                 )
+                                handleClose();
+                            }
                             }
                         />
                     )
