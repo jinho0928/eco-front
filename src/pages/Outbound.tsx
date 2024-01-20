@@ -140,7 +140,7 @@ function Outbound() {
         { key: "name", name: "상품명", width: 400 },
         ..._columns,
         {
-          key: "sum",
+          key: "total_sum",
           name: "합계",
           width: 80,
         },
@@ -166,11 +166,16 @@ function Outbound() {
     });
   };
 
-  const handleClose = () => {
+  const handleClose = (isAdded) => {
     transaction(() => {
       store.files = [];
       store.isOpen = false;
     });
+
+    if (isAdded) {
+      store.fetchOutbound(store.start.toFormat("yyyy-MM-dd"),
+        store.end.toFormat("yyyy-MM-dd"))
+    }
   };
 
   return (

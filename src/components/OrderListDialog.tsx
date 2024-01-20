@@ -57,7 +57,7 @@ export function OrderListDialog({ open, onClose, files }) {
 
   const handleAdd = async () => {
     await store.addOutbound();
-    onClose();
+    onClose(true);
   };
 
   return (
