@@ -68,8 +68,8 @@ function Outbound() {
         });
     },
 
-    addOutbound(skuid, date, value) {
-      const list = [{ date, skuid, value }];
+    addOutbound(skuid, date, value, order_no) {
+      const list = [{ skuid, date, value, ordeNor: order_no ?? "" }];
 
       axios
         .post(`${serverUrl}/outbounds`, {
@@ -118,19 +118,20 @@ function Outbound() {
                         store.addOutbound(
                           row["skuid"],
                           column.key,
-                          input ? input : "0"
+                          input ? input : "0",
+                          ""
                         );
                     }
                   }}
                 >
                   {row[column.key]}
                 </div>
-              </Tooltip>
+              </Tooltip >
             );
           },
         }))
         .filter((column) => {
-          return this.items.filter((item) => !!item[column.key]).length > 0;
+          return this.items.filter?.((item) => !!item[column.key]).length > 0;
         });
 
       return [

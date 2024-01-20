@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 
 export async function parseOrderList({ arrayBuffer }): Promise<any> {
   const book = XLSX.read(arrayBuffer, {
-    type: "buffer",
+    type: "buffer", 
   });
 
   const sheetName = book.SheetNames[0];
@@ -30,7 +30,7 @@ export async function parseOrderList({ arrayBuffer }): Promise<any> {
     .split("(")[0];
 
   // 발주번호
-  const orderNo = rows.find((row) => /발주번호/gi.test(row?.[0]))[1];
+  const order_no = rows.find((row) => /발주번호/gi.test(row?.[0]))[1];
 
   // 입고예정일, 물류센터
   const inbound =
@@ -55,7 +55,7 @@ export async function parseOrderList({ arrayBuffer }): Promise<any> {
           orderAmount: `${item[6]}`,
           availableAmount: `${item[7]}`,
           customer,
-          orderNo,
+          order_no,
           date,
           logistics,
         });

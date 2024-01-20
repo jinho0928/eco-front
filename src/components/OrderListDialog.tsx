@@ -19,10 +19,11 @@ export function OrderListDialog({ open, onClose, files }) {
 
     async addOutbound() {
       const list = toJS(store.orderList).map(
-        ({ skuid, date, availableAmount }) => ({
+        ({ skuid, date, availableAmount, order_no }) => ({
           skuid,
           date,
           value: availableAmount,
+          order_no
         })
       );
 
@@ -92,7 +93,7 @@ export function OrderListDialog({ open, onClose, files }) {
                         name: "상품명",
                       },
                       {
-                        key: "orderNo",
+                        key: "order_no",
                         name: "발주번호",
                       },
                       {

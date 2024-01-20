@@ -10,7 +10,7 @@ import FileUploadButton from "../components/FileUploadButton";
 const columns = [
   { key: "no", name: "No.", width: 45, minWidth: 45 },
   { key: "customer", name: "거래처명", width: 110, minWidth: 110 },
-  { key: "orderNo", name: "발주번호", width: 85, minWidth: 85 },
+  { key: "order_no", name: "발주번호", width: 85, minWidth: 85 },
   {
     key: "date",
     name: "입고예정일",
