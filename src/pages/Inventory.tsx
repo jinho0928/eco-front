@@ -1,4 +1,4 @@
-import { styled } from "@mui/material";
+import { isMuiElement, styled } from "@mui/material";
 import { useEffect } from "react";
 import DataGrid from "react-data-grid";
 import axios from "axios";
@@ -11,26 +11,19 @@ const serverUrl = import.meta.env.VITE_SERVER_URL;
 const columns = [
   { key: "num", name: "No.", width: 45, minWidth: 45 },
   { key: "skuid", name: "SKU ID", width: 85, minWidth: 85 },
-  { key: "name", name: "상품명", minWidth: 300 },
-  { key: "제1창고", name: "제1창고", width: 85, minWidth: 85 },
-  { key: "총창고재고", name: "총 창고 재고", width: 100, minWidth: 100 },
-  { key: "컨테이너", name: "컨테이너", width: 85, minWidth: 85 },
-  { key: "공장", name: "공장", width: 85, minWidth: 85 },
+  { key: "name", name: "상품명", minWidth: 300, width: 400 },
   {
-    key: "총입고예정재고",
-    name: "총 입고 예정 재고",
-    width: 130,
-    minWidth: 130,
+    key: "value_difference", name: "총 창고 재고", width: 100, minWidth: 100, formatter({ column, row }) {
+      const value = row[column.key];
+      const isMinus = parseInt(value, 10) < 0
+      console.log(value, isMinus)
+      return <span className={isMinus ? 'cell--warning' : ''}>{value}</span>
+    }
   },
-  { key: "창고재고", name: "창고 재고(일)", width: 110, minWidth: 110 },
-  {
-    key: "입고예정재고",
-    name: "입고 예정 재고(일)",
-    width: 140,
-    minWidth: 140,
-  },
-  { key: "총재고일수", name: "총 재고 일 수", width: 110, minWidth: 110 },
-  { key: "발주여부", name: "발주여부", width: 100, minWidth: 100 },
+  { key: "공장 재고", name: "공장 재고", width: 85, minWidth: 85 },
+  { key: "factory_stock_day", name: "창고 재고(일)", width: 110, minWidth: 110 },
+  { key: "공장재고(일)", name: "공장 재고(일)", width: 110, minWidth: 110 },
+  { key: "총 재고(일)", name: "총 재고(일)", width: 110, minWidth: 110 },
 ];
 
 function Inventory() {
@@ -105,6 +98,13 @@ const Wrapper = styled("div")`
     .rdg-cell {
       text-align: center;
     }
+
+    .cell--warning{
+      color: red;
+      font-weight: bold;
+      font-size: 20px;
+    }
+  
 
     .hover-cell {
       > .edit-button {
