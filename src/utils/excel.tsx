@@ -110,7 +110,6 @@ export async function parsePackingList({ arrayBuffer }): Promise<any> {
 export async function parseTrend({ arrayBuffer }): Promise<any> {
   const book = XLSX.read(arrayBuffer, {
     type: "buffer",
-    cellDates: true,
   });
 
   const sheetName = book.SheetNames[0];
@@ -118,6 +117,7 @@ export async function parseTrend({ arrayBuffer }): Promise<any> {
 
   const _rows: any[] = XLSX.utils.sheet_to_json(sheet, {
     header: 1,
+    raw: false,
   });
 
   const _keys = {
@@ -127,7 +127,7 @@ export async function parseTrend({ arrayBuffer }): Promise<any> {
   };
   const keys = _rows[0].map(
     (key, index) =>
-      _keys[index] ?? DateTime.fromJSDate(key).toFormat("yyyy-MM-dd")
+      _keys[index] ?? DateTime.fromJSDate(new Date(key)).toFormat("yy/MM/dd")
   );
 
   const rows = _rows.slice(1).map((row) => {
