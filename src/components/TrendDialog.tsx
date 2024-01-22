@@ -22,10 +22,10 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
         "yyyy-MM-dd"
       );
       const list = toJS(store.items).map(
-        ({ skuid, current, average, ...dates }) => {
+        ({ skuid, inventory, average, ...dates }) => {
           return {
             skuid,
-            inventory: current,
+            inventory: inventory ?? 0,
             dates: Object.entries(dates).reduce((acc, [key, value]) => {
               acc.push({ date: key, value });
               return acc;

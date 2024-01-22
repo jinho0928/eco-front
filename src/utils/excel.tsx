@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 
 export async function parseOrderList({ arrayBuffer }): Promise<any> {
   const book = XLSX.read(arrayBuffer, {
-    type: "buffer", 
+    type: "buffer",
   });
 
   const sheetName = book.SheetNames[0];
@@ -109,32 +109,33 @@ export async function parsePackingList({ arrayBuffer }): Promise<any> {
 
 export async function parseTrend({ arrayBuffer }): Promise<any> {
   const book = XLSX.read(arrayBuffer, {
-    type: 'buffer',
+    type: "buffer",
     cellDates: true,
   });
 
   const sheetName = book.SheetNames[0];
   const sheet = book.Sheets[sheetName];
 
-  const _rows: any[] = XLSX.utils
-    .sheet_to_json(sheet, {
-      header: 1,
-    })
+  const _rows: any[] = XLSX.utils.sheet_to_json(sheet, {
+    header: 1,
+  });
 
   const _keys = {
-    0: 'skuid',
-    1: 'current',
-    2: 'average'
-  }
-  const keys = _rows[0].map((key, index) => _keys[index] ?? DateTime.fromJSDate(key).toFormat('yyyy-MM-dd'))
+    0: "skuid",
+    1: "inventory",
+    2: "average",
+  };
+  const keys = _rows[0].map(
+    (key, index) =>
+      _keys[index] ?? DateTime.fromJSDate(key).toFormat("yyyy-MM-dd")
+  );
 
   const rows = _rows.slice(1).map((row) => {
     return row.reduce((acc, cur, index) => {
       acc[keys[index]] = cur;
-      return acc
-    }, {})
-  })
-
+      return acc;
+    }, {});
+  });
 
   return { rows, keys };
 }
