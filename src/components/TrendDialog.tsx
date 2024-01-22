@@ -56,7 +56,7 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
                     key: "average",
                     name: "평균판매량",
                 },
-                ...this.keys.slice(2).map((key) => ({ key, name: key }))
+                ...this.keys.slice(3).map((key) => ({ key, name: key }))
             ]
         }
     }));
