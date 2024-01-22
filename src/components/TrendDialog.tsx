@@ -52,6 +52,10 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
                     key: "current",
                     name: "현재고",
                 },
+                {
+                    key: "average",
+                    name: "평균판매량",
+                },
                 ...this.keys.slice(2).map((key) => ({ key, name: key }))
             ]
         }
