@@ -164,6 +164,11 @@ function Outbound() {
           name: "합계",
           width: 80,
         },
+        {
+          key: "inventory",
+          name: "재고",
+          width: 80,
+        },
       ];
     },
   }));

@@ -123,8 +123,8 @@ export async function parseTrend({ arrayBuffer }): Promise<any> {
   const _keys = {
     0: "skuid",
     1: "inventory",
-    2: "average",
   };
+
   const keys = _rows[0].map(
     (key, index) =>
       _keys[index] ?? DateTime.fromJSDate(new Date(key)).toFormat("yy/MM/dd")

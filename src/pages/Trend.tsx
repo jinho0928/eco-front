@@ -119,8 +119,8 @@ function Trend() {
                 { key: "name", name: "상품명", width: 400 },
                 { key: "inventory", name: "현재고", width: 100 },
                 ..._columns,
-                { key: "week_average", name: "주평균", width: 100 },
-                { key: "stock_date", name: "재고(일)", width: 100 },
+                { key: "week_average", name: "재고(일)", width: 100 },
+                { key: "stock_date", name: "주평균", width: 100 },
             ];
         },
     }));

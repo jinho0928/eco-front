@@ -22,7 +22,7 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
         "yyyy-MM-dd"
       );
       const list = toJS(store.items).map(
-        ({ skuid, inventory, average, ...dates }) => {
+        ({ skuid, inventory, ...dates }) => {
           return {
             skuid,
             inventory: inventory ?? 0,
@@ -50,14 +50,10 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
           name: "SKU ID",
         },
         {
-          key: "current",
+          key: "inventory",
           name: "현재고",
         },
-        {
-          key: "average",
-          name: "평균판매량",
-        },
-        ...this.keys.slice(3).map((key) => ({ key, name: key })),
+        ...this.keys.slice(2).map((key) => ({ key, name: key })),
       ];
     },
   }));
