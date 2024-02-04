@@ -1,11 +1,12 @@
 import DataGrid from "react-data-grid";
 import { useEffect } from "react";
-import { parseOrderList, readFileAsArrayBuffer } from "../utils";
+import { downloadExcel, parseOrderList, readFileAsArrayBuffer } from "../utils";
 import { useLocalObservable, Observer } from "mobx-react";
 import axios from "axios";
-import { styled } from "@mui/material";
+import { Button, styled } from "@mui/material";
 import { DateTime } from "luxon";
 import FileUploadButton from "../components/FileUploadButton";
+import DownloadIcon from '@mui/icons-material/Download';
 
 const columns = [
   { key: "no", name: "No.", width: 45, minWidth: 45 },
@@ -148,10 +149,22 @@ function OutboundList() {
 
     store.setItems(_itemList.flat());
   };
+
+  const handleDownload = () => {
+    downloadExcel(store.items, columns, `출고리스트_${DateTime.now().toFormat('yy-MM-dd')}`);
+  }
+
   return (
     <Wrapper>
       <div className="file-upload">
         <FileUploadButton title="발주서" onChange={handleFileChange} multiple />
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<DownloadIcon />}
+          style={{ width: "150px", height: "40px" }}
+          onClick={handleDownload}
+        >엑셀 다운로드</Button>
       </div>
 
       <Observer>
@@ -182,6 +195,7 @@ const Wrapper = styled("div")`
   .file-upload {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
   }
 
   > .rdg {

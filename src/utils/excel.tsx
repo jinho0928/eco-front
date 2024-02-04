@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx";
 import { DateTime } from "luxon";
+import { toJS } from "mobx";
 
 export async function parseOrderList({ arrayBuffer }): Promise<any> {
   const book = XLSX.read(arrayBuffer, {
@@ -151,4 +152,16 @@ export async function readFileAsArrayBuffer(file) {
 
     reader.readAsArrayBuffer(file);
   });
+}
+
+export function downloadExcel(rows, columns, filename) {
+  const _rows = toJS(rows);
+  const _columns = toJS(columns);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(_rows, { header: _columns.map(({ key }) => key) })
+  XLSX.utils.sheet_add_aoa(ws, [_columns.map(({ name }) => name)], { origin: "A1" });
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  XLSX.writeFile(wb, `${filename}.xlsx`);
 }

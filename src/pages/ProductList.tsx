@@ -7,6 +7,9 @@ import { ProductCreateDialog } from "../components/ProductCreateDialog";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { customSort } from "../utils/sort";
 import { transaction } from "mobx";
+import { downloadExcel } from "../utils";
+import DownloadIcon from '@mui/icons-material/Download';
+import { DateTime } from "luxon";
 
 const columns = [
   { key: "num", name: "No.", width: 60, minWidth: 60 },
@@ -51,6 +54,10 @@ function ProductList() {
     store.fetchProducts();
   }, []);
 
+  const handleDownload = () => {
+    downloadExcel(store.sortedItems, columns, `상품리스트_${DateTime.now().toFormat('yy-MM-dd')}`);
+  }
+
   return (
     <Wrapper>
       <div className="products-header">
@@ -62,6 +69,13 @@ function ProductList() {
         >
           상품 추가
         </Button>
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<DownloadIcon />}
+          style={{ width: "150px", height: "40px" }}
+          onClick={handleDownload}
+        >엑셀 다운로드</Button>
       </div>
       <Observer>
         {() => (
@@ -118,5 +132,6 @@ const Wrapper = styled("div")`
   .products-header {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;1
   }
 `;
