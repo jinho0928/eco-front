@@ -21,6 +21,7 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
       const date = DateTime.fromFormat(`${store.date}`, "yyMMdd").toFormat(
         "yyyy-MM-dd"
       );
+      //const inventory = parseInt(inventory.replace(/,/g, ''), 10);
       const list = toJS(store.items).map(
         ({ skuid, inventory, ...dates }) => {
           return {
@@ -42,6 +43,26 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
         console.error(err);
       }
     },
+
+//////////////
+    async updateTrend() {
+      const date = DateTime.fromFormat(`${store.date}`, "yyMMdd").toFormat(
+        "yyyy-MM-dd"
+      );
+      const list = toJS(store.items).map(({ skuid, inventory }) => ({
+        skuid,
+        inventory: inventory ?? 0,
+      }));
+
+      try {
+        await axios.put(`${serverUrl}/trend`, {
+        list,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+/////////////
 
     get columns() {
       return [
@@ -73,6 +94,7 @@ export function TrendDialog({ open, onClose, onSuccess, files }) {
 
   const handleAdd = async () => {
     await store.addTrend();
+    await store.updateTrend();
     onSuccess();
   };
 

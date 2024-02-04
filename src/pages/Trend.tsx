@@ -67,33 +67,6 @@ function Trend() {
                 });
         },
 
-        // updateInbound(skuid, date, value) {
-        //     axios
-        //         .put(`${serverUrl}/inbounds/${skuid}`, { date, value })
-        //         .then(({ data }) => {
-        //             this.fetchInbounds(
-        //                 this.start.toFormat("yyyy-MM-dd"),
-        //                 this.end.toFormat("yyyy-MM-dd")
-        //             );
-        //         });
-        // },
-
-        // addInbound(skuid, date, value) {
-        //     const list = [{ skuid, value }];
-
-        //     axios
-        //         .post(`${serverUrl}/inbounds`, {
-        //             date,
-        //             list,
-        //         })
-        //         .then(({ data }) => {
-        //             this.fetchInbounds(
-        //                 this.start.toFormat("yyyy-MM-dd"),
-        //                 this.end.toFormat("yyyy-MM-dd")
-        //             );
-        //         });
-        // },
-
         get columns() {
             const dateArr = [];
             let currentDate = this.start;

@@ -140,6 +140,36 @@ export async function parseTrend({ arrayBuffer }): Promise<any> {
   return { rows, keys };
 }
 
+export async function parseFactoryOrder({ arrayBuffer }): Promise<any> {
+  const book = XLSX.read(arrayBuffer, {
+    type: "buffer",
+  });
+
+  const sheetName = book.SheetNames[0];
+  const sheet = book.Sheets[sheetName];
+
+  const _rows: any[] = XLSX.utils.sheet_to_json(sheet, {
+    header: 1,
+    raw: false,
+  });
+
+  const _keys = {
+    2: "num",
+    13: "value",
+  };
+
+  const rows = _rows.slice(1).map((row) => {
+    return row.reduce((acc, cur, index) => {
+      acc[_keys[index]] = cur;
+      return acc;
+    }, {});
+  });
+
+  console.info('parseFactoryOrder parseFactoryOrder parseFactoryOrder parseFactoryOrder parseFactoryOrder');
+
+  return { rows, _keys };
+}
+
 export async function readFileAsArrayBuffer(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -151,4 +181,8 @@ export async function readFileAsArrayBuffer(file) {
 
     reader.readAsArrayBuffer(file);
   });
+}
+
+export async function downloadExcelFile(data) {
+
 }

@@ -4,7 +4,12 @@ import DataGrid from "react-data-grid";
 import axios from "axios";
 import { Observer, useLocalObservable } from "mobx-react";
 import "react-data-grid/lib/styles.css";
+import { autorun, transaction, values } from "mobx";
+import EditIcon from "@mui/icons-material/Edit";
+import { Filter } from "../components/Filter";
 import { customSort } from "../utils/sort";
+import FileUploadButton from "../components/FileUploadButton";
+import { FactoryOrder } from "../components/FactoryOrder";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -13,17 +18,18 @@ const columns = [
   { key: "skuid", name: "SKU ID", width: 85, minWidth: 85 },
   { key: "name", name: "상품명", minWidth: 300, width: 400 },
   {
-    key: "value_difference", name: "총 창고 재고", width: 100, minWidth: 100, formatter({ column, row }) {
+    key: "stock", name: "총 창고 재고", width: 100, minWidth: 100, formatter({ column, row }) {
       const value = row[column.key];
       const isMinus = parseInt(value, 10) < 0
       console.log(value, isMinus)
       return <span className={isMinus ? 'cell--warning' : ''}>{value}</span>
     }
   },
-  { key: "공장 재고", name: "공장 재고", width: 85, minWidth: 85 },
+  { key: "factory_value", name: "공장 재고", width: 85, minWidth: 85 },
   { key: "factory_stock_day", name: "창고 재고(일)", width: 110, minWidth: 110 },
-  { key: "공장재고(일)", name: "공장 재고(일)", width: 110, minWidth: 110 },
-  { key: "총 재고(일)", name: "총 재고(일)", width: 110, minWidth: 110 },
+  { key: "warehouse_stock_day", name: "공장 재고(일)", width: 110, minWidth: 110 },
+  { key: "total_stock_day", name: "총 재고(일)", width: 110, minWidth: 110 },
+  { key: "stock_date", name: "평균판매량", width: 110, minWidth: 110 },
 ];
 
 function Inventory() {
@@ -40,21 +46,18 @@ function Inventory() {
         return this.items;
       }
     },
-
-
+    isOpen: false,
+    files: [],
     fetchInventories() {
       axios.get(`${serverUrl}/inventories`).then(({ data }) => {
         this.items = data.result.map((item) => ({
           ...item,
-          제1창고: item.value_difference,
-          총창고재고: item.value_difference,
-          // 컨테이너: 0,
-          // 공장: 0,
-          // 총입고예정재고: 0,
-          // 창고재고: 0,
-          // 입고예정재고: 0,
-          // 총재고일수: 0,
-          // 발주여부: 0,
+          stock : item.stock,
+          factory_value : item.factory_value,
+          factory_stock_day : item.factory_stock_day,
+          warehouse_stock_day : item.warehouse_stock_day,
+          total_stock_day :  item.total_stock_day,
+          stock_date : item.stock_date,
         }));
       });
     },
@@ -64,8 +67,51 @@ function Inventory() {
     store.fetchInventories();
   }, []);
 
+  const handleFileChange = (e) => {
+      transaction(() => {
+          store.files = e.target.files;
+          store.isOpen = true;
+      });
+  };
+
+  const handleClose = () => {
+      transaction(() => {
+          store.files = [];
+          store.isOpen = false;
+      });
+  };
+
   return (
     <Wrapper>
+      <Observer>
+        {() =>
+          store.isOpen && (
+            <FactoryOrder
+              open={store.isOpen}
+              onClose={handleClose}
+              files={store.files}
+              onSuccess={() => {
+                transaction(() => {
+                  store.isOpen = false;
+                  store.fetchInventories()
+                })
+              }
+              }
+            />
+          )
+        }
+      </Observer>
+
+      <Observer>
+        {() => (
+            <FileUploadButton
+              title="공장주문서"
+              onChange={handleFileChange}
+              multiple
+            />
+        )}
+      </Observer>
+
       <Observer>
         {() => (
           <DataGrid
@@ -79,6 +125,30 @@ function Inventory() {
       </Observer>
     </Wrapper>
   );
+/*
+  return (
+    <Wrapper>
+      <Observer>
+        {() => (
+        <FileUploadButton
+           title="공장주문"
+           onChange={handleFileChange}
+        </Filter>
+        )}
+      </Observer>
+      <Observer>
+        {() => (
+          <DataGrid
+            rows={store.sortedItems}
+            defaultColumnOptions={{ resizable: true, sortable: true }}
+            sortColumns={store.sortColumns}
+            onSortColumnsChange={(columns) => (store.sortColumns = columns)}
+            columns={columns}
+          />
+        )}
+      </Observer>
+    </Wrapper>
+  );*/
 }
 
 export default Inventory;
