@@ -36,7 +36,9 @@ export function Filter({
           </Observer>
         </LocalizationProvider>
       </div>
-      {children}
+      <div className='filter__rightside'>
+        {children}
+      </div>
     </Wrapper>
   );
 }
@@ -56,6 +58,11 @@ const Wrapper = styled("div")`
   .filter__date-pickers {
     display: flex;
     align-items: center;
+    gap: 10px;
+  }
+
+  .filter__rightside{
+    display:flex;
     gap: 10px;
   }
 `;

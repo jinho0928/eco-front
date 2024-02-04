@@ -1,4 +1,4 @@
-import { isMuiElement, styled } from "@mui/material";
+import { Button, isMuiElement, styled } from "@mui/material";
 import { useEffect } from "react";
 import DataGrid from "react-data-grid";
 import axios from "axios";
@@ -10,6 +10,9 @@ import { Filter } from "../components/Filter";
 import { customSort } from "../utils/sort";
 import FileUploadButton from "../components/FileUploadButton";
 import { FactoryOrder } from "../components/FactoryOrder";
+import DownloadIcon from '@mui/icons-material/Download';
+import { downloadExcel } from "../utils";
+import { DateTime } from "luxon";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -81,8 +84,22 @@ function Inventory() {
       });
   };
 
+  const handleDownload = () => {
+    downloadExcel(store.sortedItems, columns, `재고_${DateTime.now().toFormat('yy-MM-dd')}`);
+  }
+
   return (
     <Wrapper>
+      <div className="inventory-header">
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<DownloadIcon />}
+          style={{ width: "150px", height: "40px" }}
+          onClick={handleDownload}
+        >엑셀 다운로드</Button>
+      </div>
+
       <Observer>
         {() =>
           store.isOpen && (
@@ -160,6 +177,12 @@ const Wrapper = styled("div")`
   flex: 1;
   overflow: hidden;
   padding-bottom: 20px;
+  gap: 10px;
+
+  .inventory-header {
+    display: flex;
+    justify-content: flex-end;
+  }
 
   > .rdg {
     width: 100%;

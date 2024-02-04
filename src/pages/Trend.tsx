@@ -12,6 +12,8 @@ import { Filter } from "../components/Filter";
 import FileUploadButton from "../components/FileUploadButton";
 import { customSort } from "../utils/sort";
 import { TrendDialog } from "../components/TrendDialog";
+import DownloadIcon from '@mui/icons-material/Download';
+import { downloadExcel } from "../utils";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -123,6 +125,11 @@ function Trend() {
         });
     };
 
+    
+  const handleDownload = () => {
+    downloadExcel(store.sortedItems, store.columns, `판매추이_${DateTime.now().toFormat('yy-MM-dd')}`);
+  }
+
     return (
         <Wrapper>
             <Observer>
@@ -157,6 +164,13 @@ function Trend() {
                             title="판매추이"
                             onChange={handleFileChange}
                         />
+                        <Button
+                            component="label"
+                            variant="contained"
+                            startIcon={<DownloadIcon />}
+                            style={{ width: "150px", height: "40px" }}
+                            onClick={handleDownload}
+                        >엑셀 다운로드</Button>
                     </Filter>
                 )}
             </Observer>

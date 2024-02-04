@@ -16,13 +16,14 @@ import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import "react-data-grid/lib/styles.css";
 import { autorun, toJS, transaction } from "mobx";
 import EditIcon from "@mui/icons-material/Edit";
-import { parseOrderList, readFileAsArrayBuffer } from "../utils";
+import { downloadExcel, parseOrderList, readFileAsArrayBuffer } from "../utils";
 import { OrderListDialog } from "../components/OrderListDialog";
 import { Filter } from "../components/Filter";
 import FileUploadButton from "../components/FileUploadButton";
 import { customSort, isNumeric } from "../utils/sort";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { DeleteOrderNoDialog } from "../components/DeleteOrderNoDialog";
+import DownloadIcon from '@mui/icons-material/Download';
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -228,6 +229,10 @@ function Outbound() {
     }
   }
 
+  const handleDownload = () => {
+    downloadExcel(store.sortedItems, store.columns, `출고_${DateTime.now().toFormat('yy-MM-dd')}`);
+  }
+
   return (
     <Wrapper>
       <Observer>
@@ -277,6 +282,14 @@ function Outbound() {
               onChange={handleFileChange}
               multiple
             />
+            
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<DownloadIcon />}
+              style={{ width: "150px", height: "40px" }}
+              onClick={handleDownload}
+            >엑셀 다운로드</Button>
           </Filter>
         )}
       </Observer>
