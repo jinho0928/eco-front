@@ -60,7 +60,7 @@ export function FactoryOrder({ open, onClose, onSuccess, files }) {
                     columns={[
                       {
                         key: "num",
-                        name: "Item.no",
+                        name: "Item No",
                       },
                       {
                         key: "value",
@@ -106,3 +106,4 @@ const Dialog = styled(MuiDialog)`
     max-width: none;
   }
 `;
+

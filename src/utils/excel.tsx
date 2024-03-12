@@ -137,7 +137,7 @@ export async function parseTrend({ arrayBuffer }): Promise<any> {
       return acc;
     }, {});
   });
-
+  
   return { rows, keys };
 }
 
@@ -149,26 +149,24 @@ export async function parseFactoryOrder({ arrayBuffer }): Promise<any> {
   const sheetName = book.SheetNames[0];
   const sheet = book.Sheets[sheetName];
 
-  const _rows: any[] = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    raw: false,
-  });
+  const range = XLSX.utils.decode_range(sheet["!ref"] || "A1");
 
-  const _keys = {
-    2: "num",
-    13: "value",
-  };
+  const _columns = Array.from({ length: range.e.c + 1 }, (_, i) => ({
+    key: String(i),
+    name: XLSX.utils.encode_col(i),
+  }));
 
-  const rows = _rows.slice(1).map((row) => {
-    return row.reduce((acc, cur, index) => {
-      acc[_keys[index]] = cur;
-      return acc;
-    }, {});
-  });
+  const rows: any[] = XLSX.utils
+    .sheet_to_json(sheet, {
+      header: _columns.map(({ key }) => key),
+      range,
+    })
 
-  console.info('parseFactoryOrder parseFactoryOrder parseFactoryOrder parseFactoryOrder parseFactoryOrder');
+  const _rows = rows.slice(1)
+    .filter((row) => !!row[0] && !/no/gi.test(row[0]))
+    .map((row) => { return {num : row[1], value : row[19]} })
 
-  return { rows, _keys };
+  return { items: _rows };
 }
 
 export async function readFileAsArrayBuffer(file) {
@@ -195,3 +193,4 @@ export function downloadExcel(rows, columns, filename) {
   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
   XLSX.writeFile(wb, `${filename}.xlsx`);
 }
+

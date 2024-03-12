@@ -11,7 +11,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 const columns = [
   { key: "no", name: "No.", width: 45, minWidth: 45 },
   { key: "customer", name: "거래처명", width: 110, minWidth: 110 },
-  { key: "order_no", name: "발주번호", width: 85, minWidth: 85 },
   {
     key: "date",
     name: "입고예정일",
@@ -21,8 +20,9 @@ const columns = [
       return row[column.key];
     },
   },
-  { key: "logistics", name: "물류센터", width: 80, minWidth: 80 },
+  { key: "order_no", name: "발주번호", width: 85, minWidth: 85 },
   { key: "skuid", name: "상품코드", width: 85, minWidth: 85 },
+  { key: "logistics", name: "물류센터", width: 80, minWidth: 80 },
   { key: "name", name: "상품명", minWidth: 300 },
   { key: "num", name: "아이템 No.", width: 90, minWidth: 90 },
   {
@@ -127,7 +127,8 @@ function OutboundList() {
         return {
           ..._item,
           num: item?.num,
-          ...calc(_item.orderAmount, item?.qtypallet, item?.qtyset),
+	  ...calc(_item.availableAmount, item?.qtypallet, item?.qtyset),
+          //...calc(_item.orderAmount, item?.qtypallet, item?.qtyset),
         };
       });
 

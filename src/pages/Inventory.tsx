@@ -33,6 +33,8 @@ const columns = [
   { key: "warehouse_stock_day", name: "공장 재고(일)", width: 110, minWidth: 110 },
   { key: "total_stock_day", name: "총 재고(일)", width: 110, minWidth: 110 },
   { key: "stock_date", name: "평균판매량", width: 110, minWidth: 110 },
+  { key: "inventory", name: "현재고", width: 110, minWidth: 110 },
+  { key: "coupang_date", name: "쿠팡재고(일)", width: 110, minWidth: 110 },
 ];
 
 function Inventory() {
@@ -55,12 +57,14 @@ function Inventory() {
       axios.get(`${serverUrl}/inventories`).then(({ data }) => {
         this.items = data.result.map((item) => ({
           ...item,
-          stock : item.stock,
-          factory_value : item.factory_value,
-          factory_stock_day : item.factory_stock_day,
-          warehouse_stock_day : item.warehouse_stock_day,
-          total_stock_day :  item.total_stock_day,
-          stock_date : item.stock_date,
+          stock: item.stock,
+          factory_value: item.factory_value,
+          factory_stock_day: item.factory_stock_day,
+          warehouse_stock_day: item.warehouse_stock_day,
+          total_stock_day: item.total_stock_day,
+          stock_date: item.stock_date,
+          coupang_date : item.coupang_date,
+          inventory : item.inventory,
         }));
       });
     },
@@ -71,17 +75,17 @@ function Inventory() {
   }, []);
 
   const handleFileChange = (e) => {
-      transaction(() => {
-          store.files = e.target.files;
-          store.isOpen = true;
-      });
+    transaction(() => {
+      store.files = e.target.files;
+      store.isOpen = true;
+    });
   };
 
   const handleClose = () => {
-      transaction(() => {
-          store.files = [];
-          store.isOpen = false;
-      });
+    transaction(() => {
+      store.files = [];
+      store.isOpen = false;
+    });
   };
 
   const handleDownload = () => {
@@ -91,6 +95,12 @@ function Inventory() {
   return (
     <Wrapper>
       <div className="inventory-header">
+        <FileUploadButton
+          title="공장주문서"
+          onChange={handleFileChange}
+          multiple
+        />
+        
         <Button
           component="label"
           variant="contained"
@@ -121,16 +131,6 @@ function Inventory() {
 
       <Observer>
         {() => (
-            <FileUploadButton
-              title="공장주문서"
-              onChange={handleFileChange}
-              multiple
-            />
-        )}
-      </Observer>
-
-      <Observer>
-        {() => (
           <DataGrid
             rows={store.sortedItems}
             defaultColumnOptions={{ resizable: true, sortable: true }}
@@ -142,30 +142,30 @@ function Inventory() {
       </Observer>
     </Wrapper>
   );
-/*
-  return (
-    <Wrapper>
-      <Observer>
-        {() => (
-        <FileUploadButton
-           title="공장주문"
-           onChange={handleFileChange}
-        </Filter>
-        )}
-      </Observer>
-      <Observer>
-        {() => (
-          <DataGrid
-            rows={store.sortedItems}
-            defaultColumnOptions={{ resizable: true, sortable: true }}
-            sortColumns={store.sortColumns}
-            onSortColumnsChange={(columns) => (store.sortColumns = columns)}
-            columns={columns}
-          />
-        )}
-      </Observer>
-    </Wrapper>
-  );*/
+  /*
+    return (
+      <Wrapper>
+        <Observer>
+          {() => (
+          <FileUploadButton
+             title="공장주문"
+             onChange={handleFileChange}
+          </Filter>
+          )}
+        </Observer>
+        <Observer>
+          {() => (
+            <DataGrid
+              rows={store.sortedItems}
+              defaultColumnOptions={{ resizable: true, sortable: true }}
+              sortColumns={store.sortColumns}
+              onSortColumnsChange={(columns) => (store.sortColumns = columns)}
+              columns={columns}
+            />
+          )}
+        </Observer>
+      </Wrapper>
+    );*/
 }
 
 export default Inventory;
@@ -182,6 +182,7 @@ const Wrapper = styled("div")`
   .inventory-header {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
   }
 
   > .rdg {
@@ -212,3 +213,4 @@ const Wrapper = styled("div")`
     }
   }
 `;
+
